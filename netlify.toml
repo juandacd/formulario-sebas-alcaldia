@@ -1,0 +1,42 @@
+# ============================================================
+# CAMPAÑA SEBAS LÓPEZ - ALCALDÍA DE MEDELLÍN
+# Configuración de despliegue en Netlify
+# ------------------------------------------------------------
+# - Sitio estático: index.html (formulario público) + panel.html (privado)
+# - Funciones serverless en netlify/functions (panel privado de respuestas)
+# - Ninguna credencial vive en el repositorio: todo sale de variables
+#   de entorno configuradas en el panel de Netlify
+#   (PANEL_PASSWORD, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+# ============================================================
+
+[build]
+  # El sitio es estático y vive en la raíz del repositorio
+  publish = "."
+  # Carpeta de Netlify Functions
+  functions = "netlify/functions"
+
+[build.environment]
+  # Node 20 incluye fetch nativo, que usa la función del panel para
+  # llamar al REST API de Supabase (sin dependencias extra).
+  NODE_VERSION = "20"
+
+# ------------------------------------------------------------
+# El panel es privado: los buscadores no deben indexarlo ni guardarlo
+# ------------------------------------------------------------
+[[headers]]
+  for = "/panel.html"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow, noarchive"
+    Cache-Control = "no-store, must-revalidate"
+
+# ------------------------------------------------------------
+# El código fuente de la función nunca debe servirse como archivo estático.
+# La función se invoca en /.netlify/functions/panel-data (con punto inicial),
+# por lo que esta regla no afecta al endpoint real.
+# El destino /no-disponible no existe: Netlify responde con su página 404.
+# ------------------------------------------------------------
+[[redirects]]
+  from = "/netlify/functions/*"
+  to = "/no-disponible"
+  status = 404
+  force = true

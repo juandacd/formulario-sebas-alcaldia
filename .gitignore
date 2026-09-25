@@ -1,0 +1,12 @@
+# Artefactos locales del arnés de pruebas E2E (no forman parte del sitio)
+_e2e_chrome_profile/
+_e2e_downloads/
+__pycache__/
+*.pyc
+
+# Dependencias / entorno
+node_modules/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
