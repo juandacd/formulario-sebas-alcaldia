@@ -191,6 +191,7 @@ function initResetViewButton() {
     const formSection = document.getElementById('form-section');
     if (formSection) formSection.style.display = 'none';
     formAnswers = {};
+    choiceSelections = {};
     currentQuestionIndex = 0;
 
     const welcomeSection = document.getElementById('welcome-section');
@@ -265,17 +266,6 @@ const FORM_QUESTIONS = [
       'Corregimiento'
     ]
   },
-  {
-    id: 'referido_por',
-    block: 'bloque-datos',
-    blockTitle: 'Tus datos',
-    title: '¿Quién te invitó a responder esta encuesta?',
-    helper: 'Opcional: cuéntanos quién te compartió la encuesta.',
-    type: 'text',
-    placeholder: 'Nombre de la persona (opcional)',
-    required: false,
-    key: 'referido_por'
-  },
   // BLOQUE "LO QUE TE GUSTA"
   {
     id: 'le_gusta',
@@ -284,6 +274,7 @@ const FORM_QUESTIONS = [
     title: '¿Qué es lo que más te gusta de tu barrio o comuna?',
     helper: 'Elige la opción que mejor represente lo positivo de tu entorno.',
     type: 'choice',
+    allowOtherText: true, // La opción "Otro" pide texto libre y no auto-avanza
     required: true,
     key: 'le_gusta',
     options: [
@@ -304,6 +295,7 @@ const FORM_QUESTIONS = [
     title: '¿Cuál es el principal problema que ves en Medellín hoy?',
     helper: 'Selecciona la prioridad más urgente que debe atenderse.',
     type: 'choice',
+    allowOtherText: true, // La opción "Otro" pide texto libre y no auto-avanza
     required: true,
     key: 'problema_principal',
     options: [
@@ -322,7 +314,7 @@ const FORM_QUESTIONS = [
     id: 'seguridad_nocturna',
     block: 'bloque-preocupa',
     blockTitle: 'Lo que te preocupa',
-    title: '¿Qué tan seguro/a te sientes caminando en tu barrio de noche?',
+    title: '¿Qué tan seguro/a te sientes en tu barrio?',
     helper: 'Elige la opción que mejor describa tu percepción.',
     type: 'choice',
     required: true,
@@ -357,12 +349,26 @@ const FORM_QUESTIONS = [
     required: true,
     key: 'quiere_contacto',
     options: ['Sí', 'No']
+  },
+  // ÚLTIMA PREGUNTA (opcional): referido, movida al final del formulario a petición del equipo
+  {
+    id: 'referido_por',
+    block: 'bloque-datos',
+    blockTitle: 'Tus datos',
+    title: 'Eres referido por:',
+    helper: 'Opcional: cuéntanos quién te compartió la encuesta.',
+    type: 'text',
+    placeholder: 'Nombre de la persona (opcional)',
+    required: false,
+    key: 'referido_por'
   }
 ];
 
 // Estado global de respuestas y navegación
 let currentQuestionIndex = 0;
 let formAnswers = {};
+// Opción única seleccionada por id de pregunta (permite distinguir "Otro" de la respuesta escrita)
+let choiceSelections = {};
 let navigationDirection = 'forward'; // 'forward' | 'backward'
 
 /**
@@ -574,8 +580,10 @@ function getQuestionInputHtml(q) {
   }
 
   if (q.type === 'choice') {
+    // Selección recordada por id: permite que "Otro" no se confunda con la respuesta escrita
+    const selectedVal = (q.id in choiceSelections) ? choiceSelections[q.id] : currentVal;
     const optionsHtml = q.options.map(opt => {
-      const isSelected = currentVal === opt ? 'selected' : '';
+      const isSelected = selectedVal === opt ? 'selected' : '';
       return `
         <button type="button" class="option-btn ${isSelected}" data-val="${escapeHtml(opt)}">
           <span>${escapeHtml(opt)}</span>
@@ -584,7 +592,22 @@ function getQuestionInputHtml(q) {
       `;
     }).join('');
 
-    return `<div class="options-grid" id="options-${q.id}">${optionsHtml}</div>`;
+    // Campo de texto libre debajo de los botones: visible solo cuando "Otro" está seleccionado
+    const otherInputHtml = q.allowOtherText ? `
+      <div class="other-input-wrap${selectedVal === 'Otro' ? ' is-open' : ''}" id="other-input-${q.id}">
+        <input
+          type="text"
+          class="form-input-text"
+          id="other-text-${q.id}"
+          placeholder="Cuéntanos cuál"
+          maxlength="80"
+          autocomplete="off"
+          value="${selectedVal === 'Otro' ? escapeHtml(currentVal) : ''}"
+        />
+      </div>
+    ` : '';
+
+    return `<div class="options-grid" id="options-${q.id}">${optionsHtml}</div>${otherInputHtml}`;
   }
 
   if (q.type === 'binary') {
@@ -714,9 +737,34 @@ function attachQuestionListeners(q) {
       const buttons = grid.querySelectorAll('.option-btn');
       buttons.forEach(btn => {
         btn.addEventListener('click', () => {
+          const val = btn.getAttribute('data-val');
+          const isOther = q.allowOtherText === true && val === 'Otro';
+          const wasOther = choiceSelections[q.id] === 'Otro';
+
           buttons.forEach(b => b.classList.remove('selected'));
           btn.classList.add('selected');
-          formAnswers[q.key] = btn.getAttribute('data-val');
+          choiceSelections[q.id] = val;
+
+          if (isOther) {
+            // "Otro": NO auto-avanzar. Mostrar el campo de texto y exigir contenido.
+            if (!wasOther) {
+              // Viene de una opción normal: limpiar la respuesta previa (sin residuos)
+              formAnswers[q.key] = '';
+              const otherInput = document.getElementById(`other-text-${q.id}`);
+              if (otherInput) otherInput.value = '';
+            }
+            const wrap = document.getElementById(`other-input-${q.id}`);
+            if (wrap) wrap.classList.add('is-open');
+            updateNextButtonState();
+            const otherInput = document.getElementById(`other-text-${q.id}`);
+            if (otherInput) otherInput.focus();
+            return;
+          }
+
+          // Opción normal: ocultar el campo de "Otro" y conservar solo esta opción
+          const wrap = document.getElementById(`other-input-${q.id}`);
+          if (wrap) wrap.classList.remove('is-open');
+          formAnswers[q.key] = val;
           updateNextButtonState();
 
           setTimeout(() => {
@@ -728,6 +776,25 @@ function attachQuestionListeners(q) {
           }, 220);
         });
       });
+    }
+
+    // Texto libre asociado a la opción "Otro"
+    if (q.allowOtherText) {
+      const otherInput = document.getElementById(`other-text-${q.id}`);
+      if (otherInput) {
+        otherInput.addEventListener('input', (e) => {
+          if (choiceSelections[q.id] === 'Otro') {
+            formAnswers[q.key] = e.target.value;
+          }
+          updateNextButtonState();
+        });
+        otherInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' && isCurrentQuestionValid()) {
+            e.preventDefault();
+            handleNextOrSubmit();
+          }
+        });
+      }
     }
   } else if (q.type === 'binary') {
     const group = document.getElementById(`binary-${q.id}`);

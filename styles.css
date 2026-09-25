@@ -925,6 +925,23 @@ body {
   opacity: 1;
 }
 
+/* Campo de texto libre que aparece debajo de los botones al elegir "Otro" */
+.other-input-wrap {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  margin-top: 0;
+  transition: max-height 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.28s ease,
+              margin-top 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.other-input-wrap.is-open {
+  max-height: 96px;
+  opacity: 1;
+  margin-top: 14px;
+}
+
 /* Botones Grandes de Sí / No */
 .binary-choice-group {
   display: grid;
