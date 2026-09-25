@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Campaña Sebas López - Alcaldía</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: #ffffff;
+    color: #1a1a2e;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .card {
+    max-width: 480px;
+    width: 100%;
+    background: #f8f9fc;
+    border: 1px solid #e2e4ee;
+    border-radius: 20px;
+    padding: 36px 28px;
+    text-align: center;
+  }
+  .badge {
+    display: inline-block;
+    background: #dbeafe;
+    color: #1e40af;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 999px;
+    margin-bottom: 18px;
+  }
+  h1 {
+    font-size: 22px;
+    line-height: 1.3;
+    margin: 0 0 10px;
+  }
+  p {
+    color: #5c5c70;
+    font-size: 15px;
+    line-height: 1.5;
+    margin: 0 0 4px;
+  }
+  .spinner {
+    width: 28px;
+    height: 28px;
+    margin: 26px auto 4px;
+    border: 3px solid #e2e4ee;
+    border-top-color: #1e40af;
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .foot {
+    margin-top: 22px;
+    font-size: 12px;
+    color: #5c5c70;
+    opacity: 0.8;
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <span class="badge">Campaña Sebas López</span>
+    <h1>El formulario se está preparando</h1>
+    <p>Muy pronto podrás responder aquí unas preguntas rápidas para la campaña a la Alcaldía.</p>
+    <div class="spinner"></div>
+    <p class="foot">Este es el mismo enlace que quedará activo en el código QR.</p>
+  </div>
+</body>
+</html>
