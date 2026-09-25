@@ -1,79 +1,194 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Campaña Sebas López - Alcaldía</title>
-<style>
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    min-height: 100vh;
-    background: #ffffff;
-    color: #1a1a2e;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-  }
-  .card {
-    max-width: 480px;
-    width: 100%;
-    background: #f8f9fc;
-    border: 1px solid #e2e4ee;
-    border-radius: 20px;
-    padding: 36px 28px;
-    text-align: center;
-  }
-  .badge {
-    display: inline-block;
-    background: #dbeafe;
-    color: #1e40af;
-    font-weight: 600;
-    font-size: 13px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    padding: 6px 14px;
-    border-radius: 999px;
-    margin-bottom: 18px;
-  }
-  h1 {
-    font-size: 22px;
-    line-height: 1.3;
-    margin: 0 0 10px;
-  }
-  p {
-    color: #5c5c70;
-    font-size: 15px;
-    line-height: 1.5;
-    margin: 0 0 4px;
-  }
-  .spinner {
-    width: 28px;
-    height: 28px;
-    margin: 26px auto 4px;
-    border: 3px solid #e2e4ee;
-    border-top-color: #1e40af;
-    border-radius: 50%;
-    animation: spin 0.9s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .foot {
-    margin-top: 22px;
-    font-size: 12px;
-    color: #5c5c70;
-    opacity: 0.8;
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#00AED9">
+  <title>Sebas López | Tu opinión construye a Medellín</title>
+  <meta name="description" content="Participa en la construcción del futuro de Medellín con el concejal Sebas López. Tu opinión cuenta.">
+
+  <!-- Tipografía moderna: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Estilos del sistema de diseño -->
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="card">
-    <span class="badge">Campaña Sebas López</span>
-    <h1>El formulario se está preparando</h1>
-    <p>Muy pronto podrás responder aquí unas preguntas rápidas para la campaña a la Alcaldía.</p>
-    <div class="spinner"></div>
-    <p class="foot">Este es el mismo enlace que quedará activo en el código QR.</p>
+
+  <!-- Elementos de iluminación ambiental sutil de fondo -->
+  <div class="bg-ambient" aria-hidden="true">
+    <div class="ambient-blob-1"></div>
+    <div class="ambient-blob-2"></div>
   </div>
+
+  <div class="app-container">
+
+    <!-- HEADER / HERO: LOGO OFICIAL CENTRADO Y RESPONSIVE -->
+    <header class="site-header animate-fade-in">
+      <a href="#" class="logo-link" aria-label="Inicio Sebas López">
+        <img
+          src="logo.png"
+          alt="Sebas López - Alcaldía de Medellín"
+          class="hero-logo"
+          width="7681"
+          height="2386"
+          loading="eager"
+          decoding="async"
+        >
+      </a>
+    </header>
+
+    <!-- CONTENIDO PRINCIPAL: PANTALLA DE BIENVENIDA -->
+    <main class="main-content">
+      <section class="welcome-screen animate-fade-up delay-1" id="welcome-section" aria-labelledby="welcome-title">
+        <div class="welcome-card">
+          
+          <!-- Badge distintivo de la campaña -->
+          <div class="badge">
+            <span class="badge-dot" aria-hidden="true"></span>
+            <span>Medellín Nos Une</span>
+          </div>
+
+          <!-- Título llamativo de impacto ciudadano -->
+          <h1 class="welcome-title" id="welcome-title">
+            Tu opinión construye a <span class="highlight">Medellín</span>
+          </h1>
+
+          <!-- Descripción cercana y directa -->
+          <p class="welcome-description">
+            Queremos escucharte de primera mano. Comparte tus prioridades e ideas para transformar juntos nuestra ciudad.
+          </p>
+
+          <!-- Píldoras informativas rápidas para incentivar la participación móvil -->
+          <div class="info-pills" aria-label="Detalles de la encuesta">
+            <div class="info-pill">
+              <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <circle cx="12" cy="12" r="9"></circle>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 7v5l3 2"></path>
+              </svg>
+              <span>Toma menos de 2 min</span>
+            </div>
+            <div class="info-pill">
+              <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+              </svg>
+              <span>100% Confidencial</span>
+            </div>
+          </div>
+
+          <!-- Botón de acción principal (Call to Action) -->
+          <button type="button" class="btn-primary" id="btn-start" aria-label="Comenzar la encuesta">
+            <span>Comenzar</span>
+            <svg class="btn-icon" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"></path>
+            </svg>
+          </button>
+
+          <!-- Nota sutil de privacidad -->
+          <p class="privacy-note">
+            <svg fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+            </svg>
+            Tus datos están protegidos y seguros
+          </p>
+
+          <!-- Contenedor para mensajes y alertas dinámicas de bienvenida -->
+          <div id="alert-container" aria-live="polite"></div>
+
+          <!-- BOTÓN TEMPORAL DE PRUEBA SUPABASE (oculto por defecto para usuarios finales) -->
+          <div class="supabase-test-box" id="test-connection-box" style="display: none;">
+            <span class="test-label">Prueba técnica Supabase</span>
+            <button type="button" class="btn-secondary" id="btn-test-supabase">
+              <span id="btn-test-text">Probar envío a Supabase</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           SECCIÓN DEL FORMULARIO INTERACTIVO (TYPEFORM STYLE)
+           ============================================================ -->
+      <section class="form-section animate-fade-up" id="form-section" style="display: none;" aria-hidden="true">
+        <div class="form-card">
+
+          <!-- Barra de progreso superior -->
+          <div class="progress-bar-container">
+            <div class="progress-meta">
+              <span class="progress-step-text" id="progress-step-text">Paso 1 de 8</span>
+              <span class="progress-percent-text" id="progress-percent-text">12%</span>
+            </div>
+            <div class="progress-track" role="progressbar" id="progress-track" aria-valuenow="12" aria-valuemin="0" aria-valuemax="100">
+              <div class="progress-fill" id="progress-fill" style="width: 12.5%;"></div>
+            </div>
+          </div>
+
+          <!-- Contenedor dinámico de la pregunta actual -->
+          <div class="question-container" id="question-container">
+            <!-- La pregunta activa y sus controles se renderizan aquí dinámicamente -->
+          </div>
+
+          <!-- Contenedor de alertas específicas del formulario -->
+          <div id="form-alert-container" aria-live="polite"></div>
+
+          <!-- Controles de navegación: Atrás / Siguiente -->
+          <div class="form-nav-controls">
+            <button type="button" class="btn-nav btn-nav-back" id="btn-prev" aria-label="Pregunta anterior" style="visibility: hidden;">
+              <svg fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"></path>
+              </svg>
+              <span>Atrás</span>
+            </button>
+
+            <button type="button" class="btn-primary btn-nav-next" id="btn-next" disabled>
+              <span id="btn-next-text">Siguiente</span>
+              <svg class="btn-icon" id="btn-next-icon" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"></path>
+              </svg>
+            </button>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============================================================
+           PANTALLA DE ÉXITO / AGRADECIMIENTO (MOSTRADA TRAS GUARDAR)
+           ============================================================ -->
+      <section class="success-screen animate-fade-up" id="success-screen" style="display: none;" aria-hidden="true">
+        <div class="success-card">
+          <div class="success-icon-wrap" aria-hidden="true">
+            <svg fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"></path>
+            </svg>
+          </div>
+          <h2 class="success-title">¡Gracias por tu opinión!</h2>
+          <p class="success-message">
+            Tus ideas y respuestas han sido registradas con éxito. Con tu voz seguimos construyendo una mejor Medellín.
+          </p>
+          <div class="success-details" id="success-details-box">
+            <!-- Datos de confirmación inyectados por JS -->
+          </div>
+          <button type="button" class="btn-secondary" id="btn-reset-view">
+            <span>Volver al inicio</span>
+          </button>
+        </div>
+      </section>
+
+
+    </main>
+
+    <!-- FOOTER INSTITUCIONAL -->
+    <footer class="site-footer animate-fade-in delay-2">
+      <p class="footer-text">© 2026 Sebas López · Alcaldía de Medellín</p>
+    </footer>
+
+  </div>
+
+  <!-- SUPABASE JS SDK (CDN OFICIAL) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- SCRIPT PRINCIPAL DE LA APLICACIÓN -->
+  <script src="script.js"></script>
 </body>
 </html>
