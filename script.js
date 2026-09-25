@@ -8,7 +8,7 @@
 // 1. Configuración de credenciales de Supabase
 const SUPABASE_CONFIG = {
   url: 'https://xndkpvsnlmyunlnqkrwf.supabase.co',
-  anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhuZGtwdnNubG15dW5sbnFrcndmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzNDA5OTksImV4cCI6MjEwNTkxNjk5OX0.JgP6htt_QU0Q6RphDkIqxe2nVm5q63yZKw_CaU3W83k',
+  anonKey: 'sb_publishable_a3dXjRpitFszJWvJgM-yvw_gvfszpS4',
   table: 'respuestas'
 };
 
@@ -21,8 +21,8 @@ let supabaseClient = null;
 document.addEventListener('DOMContentLoaded', () => {
   initSupabase();
   initWelcomeScreen();
-  initTestButton();
   initResetViewButton();
+
   initInteractiveForm();
 
 });
@@ -56,7 +56,8 @@ function initSupabase() {
  * @param {string} nombre
  * @param {string} celular
  * @param {object} respuestasObjeto
- * @returns {Promise<{success: boolean, data?: any, error?: any}>}
+ * @returns {Promise<{success: boolean, data?: any, error?: any}>} En éxito, data es null
+ *          porque la fila NO se solicita de vuelta (sin .select()).
  */
 async function enviarFormulario(nombre, celular, respuestasObjeto) {
   // Asegurar que el cliente esté inicializado
@@ -77,30 +78,35 @@ async function enviarFormulario(nombre, celular, respuestasObjeto) {
   };
 
   try {
-    const { data, error } = await supabaseClient
+    // IMPORTANTE: NO encadenar .select() después de .insert().
+    // La tabla "respuestas" tiene RLS con política de INSERT para el rol anon pero SIN
+    // política de SELECT (para que nadie pueda leer las respuestas de otros usuarios).
+    // Pedir de vuelta la fila insertada (Prefer: return=representation) hace que Postgres
+    // exija privilegio de SELECT sobre la fila nueva y devuelva el error 42501.
+    const { error } = await supabaseClient
       .from(SUPABASE_CONFIG.table)
-      .insert([payload])
-      .select();
+      .insert(payload);
 
     if (error) {
       console.error('❌ Error devuelto por Supabase al insertar:', error);
 
       let mensajeUsuario = 'Tuvimos un inconveniente al guardar tus respuestas. Por favor inténtalo de nuevo.';
-      
-      // Diagnóstico amigable si falta la política RLS en Supabase
+
+      // Diagnóstico amigable si falta la política RLS de INSERT
       if (error.code === '42501' || (error.message && error.message.includes('row-level security'))) {
-        mensajeUsuario = 'Conexión a Supabase lograda, pero la tabla "respuestas" requiere habilitar la política RLS (INSERT para rol "anon"). Revisa la consola o las notas de configuración.';
+        mensajeUsuario = 'Conexión a Supabase lograda, pero la tabla "respuestas" rechazó la escritura por políticas RLS (se requiere una política INSERT para el rol "anon"). Revisa la consola o las notas de configuración.';
       }
 
       mostrarErrorUI(mensajeUsuario, error);
       return { success: false, error };
     }
 
-    // Éxito en la inserción
-    console.log('✔ Respuestas registradas en Supabase exitosamente:', data);
+    // Éxito en la inserción: como no pedimos la fila de vuelta, el éxito se determina
+    // únicamente por la ausencia de error (error === null).
+    console.log('✔ Respuestas registradas en Supabase exitosamente.');
     ocultarErrorUI();
     mostrarPantallaExito(payload);
-    return { success: true, data };
+    return { success: true, data: null };
 
   } catch (err) {
     console.error('❌ Excepción de red o ejecución al enviar:', err);
@@ -198,43 +204,6 @@ function initResetViewButton() {
     ocultarErrorUI();
   });
 }
-
-/**
- * 5. Botón temporal de prueba para testear Supabase antes de montar el formulario final
- */
-function initTestButton() {
-  const testBtn = document.getElementById('btn-test-supabase');
-  const testBtnText = document.getElementById('btn-test-text');
-
-  if (!testBtn) return;
-
-  testBtn.addEventListener('click', async () => {
-    ocultarErrorUI();
-    testBtn.disabled = true;
-    const originalText = testBtnText ? testBtnText.textContent : 'Probar envío';
-    if (testBtnText) testBtnText.innerHTML = '<span class="btn-spinner"></span> Conectando...';
-
-    // Datos simulados de prueba
-    const nombrePrueba = 'Juan Camilo';
-    const celularPrueba = '3001234567';
-    const respuestasPrueba = {
-      barrio: 'El Poblado',
-      prioridad_ciudad: 'Seguridad y Convivencia',
-      propuesta_principal: 'Más presencia institucional y tecnología preventiva',
-      origen_test: 'Botón temporal de prueba'
-    };
-
-    console.log('>>> [Prueba Supabase] Enviando registro de prueba:', { nombrePrueba, celularPrueba, respuestasPrueba });
-
-    try {
-      await enviarFormulario(nombrePrueba, celularPrueba, respuestasPrueba);
-    } finally {
-      testBtn.disabled = false;
-      if (testBtnText) testBtnText.textContent = originalText;
-    }
-  });
-}
-
 
 /**
  * ============================================================
@@ -809,27 +778,6 @@ function initWelcomeScreen() {
       currentQuestionIndex = 0;
       renderCurrentQuestion();
       formSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  });
-}
-
-
- * Manejo del botón "Comenzar"
- */
-function initWelcomeScreen() {
-  const startButton = document.getElementById('btn-start');
-  const formSection = document.getElementById('form-section');
-
-  if (!startButton) return;
-
-  startButton.addEventListener('click', (event) => {
-    event.preventDefault();
-    console.log('>>> [Comenzar presionado] Usuario inició la experiencia.');
-
-    if (formSection && formSection.children.length > 0) {
-      formSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else {
-      console.log('>>> Formulario en preparación para el siguiente paso.');
     }
   });
 }
