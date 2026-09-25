@@ -211,7 +211,7 @@ function initResetViewButton() {
  * ============================================================
  */
 
-// Definición de las 8 preguntas del formulario
+// Definición de las 9 preguntas del formulario
 const FORM_QUESTIONS = [
   // DATOS DEL CIUDADANO
   {
@@ -265,6 +265,17 @@ const FORM_QUESTIONS = [
       'Corregimiento'
     ]
   },
+  {
+    id: 'referido_por',
+    block: 'bloque-datos',
+    blockTitle: 'Tus datos',
+    title: '¿Quién te invitó a responder esta encuesta?',
+    helper: 'Opcional: cuéntanos quién te compartió la encuesta.',
+    type: 'text',
+    placeholder: 'Nombre de la persona (opcional)',
+    required: false,
+    key: 'referido_por'
+  },
   // BLOQUE "LO QUE TE GUSTA"
   {
     id: 'le_gusta',
@@ -312,11 +323,16 @@ const FORM_QUESTIONS = [
     block: 'bloque-preocupa',
     blockTitle: 'Lo que te preocupa',
     title: '¿Qué tan seguro/a te sientes caminando en tu barrio de noche?',
-    helper: 'Responde con total sinceridad.',
-    type: 'binary',
+    helper: 'Elige la opción que mejor describa tu percepción.',
+    type: 'choice',
     required: true,
     key: 'seguridad_nocturna',
-    options: ['Sí', 'No']
+    options: [
+      'Muy seguro/a',
+      'Algo seguro/a',
+      'Poco seguro/a',
+      'Nada seguro/a'
+    ]
   },
   // BLOQUE "LO QUE PROPONES"
   {
@@ -409,6 +425,7 @@ async function submitFinalForm() {
 
   const respuestasObjeto = {
     comuna: formAnswers.comuna || '',
+    referido_por: (formAnswers.referido_por || '').trim(),
     le_gusta: formAnswers.le_gusta || '',
     problema_principal: formAnswers.problema_principal || '',
     seguridad_nocturna: formAnswers.seguridad_nocturna || '',
