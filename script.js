@@ -356,7 +356,7 @@ const FORM_QUESTIONS = [
     block: 'bloque-datos',
     blockTitle: 'Tus datos',
     title: 'Eres referido por:',
-    helper: 'Opcional: cuéntanos quién te compartió la encuesta.',
+    helper: '¿Quién te invitó?',
     type: 'text',
     placeholder: 'Nombre de la persona (opcional)',
     required: false,
