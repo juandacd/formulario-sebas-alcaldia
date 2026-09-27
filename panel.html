@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#00AED9">
   <meta name="robots" content="noindex, nofollow, noarchive">
   <title>Panel de Respuestas | Campaña Sebas López</title>
@@ -35,6 +35,19 @@
 
     /* El panel necesita más ancho que el formulario móvil */
     .panel-container { max-width: 1120px; }
+
+    /*
+     * Mobile-first: las vistas ocupan TODO el ancho disponible del contenedor.
+     * Sin esto, .main-content (align-items: center) dimensiona cada seccion a
+     * su contenido y la tabla (min-width 920px) estira la pagina entera,
+     * forzando zoom-out en celular y desktop.
+     */
+    .login-view,
+    .dashboard-view {
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+    }
 
     /* ---------- Encabezado simple (sin logo grande) ---------- */
     .panel-header {
@@ -73,7 +86,8 @@
     }
 
     .panel-header-actions .btn-nav {
-      padding: 10px 16px;
+      min-height: 44px;
+      padding: 11px 16px;
       font-size: 0.875rem;
     }
 
@@ -226,6 +240,19 @@
       height: 260px;
     }
 
+    /*
+     * El canvas va posicionado absoluto para que su ancho en px (fijado por
+     * Chart.js) NUNCA contribuya al min-content de la pagina: asi el layout
+     * siempre puede encogerse hasta el viewport (evita el bloqueo que forzaba
+     * zoom-out) y el canvas llena exactamente el contenedor de altura fija.
+     */
+    .chart-box canvas {
+      position: absolute;
+      inset: 0;
+      width: 100% !important;
+      height: 100% !important;
+    }
+
     .chart-box.tall { height: 340px; }
 
     .chart-fallback {
@@ -286,12 +313,14 @@
       color: var(--color-secondary);
     }
 
-    .table-header .btn-secondary { min-width: 0; }
+    .table-header .btn-secondary { min-width: 0; min-height: 44px; padding: 12px 20px; }
 
-    /* Scroll horizontal obligatorio en móvil */
+    /* Scroll horizontal obligatorio en móvil: SOLO la tabla, nunca la pagina */
     .table-scroll {
       width: 100%;
+      max-width: 100%;
       overflow-x: auto;
+      overscroll-behavior-x: contain;
       -webkit-overflow-scrolling: touch;
     }
 
