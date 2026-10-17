@@ -212,7 +212,7 @@ function initResetViewButton() {
  * ============================================================
  */
 
-// Definición de las 9 preguntas del formulario
+// Definición de las 11 preguntas del formulario
 const FORM_QUESTIONS = [
   // DATOS DEL CIUDADANO
   {
@@ -264,6 +264,24 @@ const FORM_QUESTIONS = [
       'Guayabal',
       'Belén',
       'Corregimiento'
+    ]
+  },
+  {
+    id: 'rol_representacion',
+    block: 'bloque-datos',
+    blockTitle: 'Tus datos',
+    title: 'Rol de representación:',
+    helper: 'Selecciona el rol con el que te identificas en tu comunidad.',
+    type: 'choice',
+    allowOtherText: true, // La opción "Otro" pide texto libre y no auto-avanza
+    required: true,
+    key: 'rol_representacion',
+    options: [
+      'Edil',
+      'JAC',
+      'Líder',
+      'Líder juvenil',
+      'Otro'
     ]
   },
   // BLOQUE "LO QUE TE GUSTA"
@@ -343,11 +361,22 @@ const FORM_QUESTIONS = [
     id: 'quiere_contacto',
     block: 'bloque-propones',
     blockTitle: 'Lo que propones',
-    title: '¿Te gustaría que te contactemos con más información sobre las propuestas de la campaña?',
+    title: '¿Te gustaría que te contactáramos con más información sobre “Hablemos de Medallo”?',
     helper: 'Mantente informado sobre las iniciativas ciudadanas de Sebas López.',
     type: 'binary',
     required: true,
     key: 'quiere_contacto',
+    options: ['Sí', 'No']
+  },
+  {
+    id: 'quiere_voluntariado',
+    block: 'bloque-propones',
+    blockTitle: 'Lo que propones',
+    title: '¿Te gustaría sumarte como voluntario?',
+    helper: 'Podemos contarte cómo participar en actividades de tu barrio.',
+    type: 'binary',
+    required: true,
+    key: 'quiere_voluntariado',
     options: ['Sí', 'No']
   },
   // ÚLTIMA PREGUNTA (opcional): referido, movida al final del formulario a petición del equipo
@@ -431,12 +460,14 @@ async function submitFinalForm() {
 
   const respuestasObjeto = {
     comuna: formAnswers.comuna || '',
+    rol_representacion: formAnswers.rol_representacion || '',
     referido_por: (formAnswers.referido_por || '').trim(),
     le_gusta: formAnswers.le_gusta || '',
     problema_principal: formAnswers.problema_principal || '',
     seguridad_nocturna: formAnswers.seguridad_nocturna || '',
     propuesta_cambio: formAnswers.propuesta_cambio || '',
-    quiere_contacto: formAnswers.quiere_contacto || ''
+    quiere_contacto: formAnswers.quiere_contacto || '',
+    quiere_voluntariado: formAnswers.quiere_voluntariado || ''
   };
 
   // Estado de carga en el botón

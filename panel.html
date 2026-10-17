@@ -483,12 +483,14 @@
                   <th scope="col">Nombre</th>
                   <th scope="col">Celular</th>
                   <th scope="col">Comuna</th>
+                  <th scope="col">Rol de representación</th>
                   <th scope="col">Referido por</th>
                   <th scope="col">Le gusta</th>
                   <th scope="col">Problema principal</th>
                   <th scope="col">Seguridad nocturna</th>
                   <th scope="col">Propuesta</th>
                   <th scope="col">Quiere contacto</th>
+                  <th scope="col">Voluntario</th>
                   <th scope="col">Fecha</th>
                 </tr>
               </thead>
@@ -522,7 +524,7 @@
 
       const ENDPOINT = '/.netlify/functions/panel-data';
       const CSV_DELIMITER = ';'; // Excel en español interpreta mejor el punto y coma
-      const CSV_HEADERS = ['Nombre', 'Celular', 'Comuna', 'Referido por', 'Le gusta', 'Problema principal', 'Seguridad nocturna', 'Propuesta', 'Quiere contacto', 'Fecha'];
+      const CSV_HEADERS = ['Nombre', 'Celular', 'Comuna', 'Rol de representación', 'Referido por', 'Le gusta', 'Problema principal', 'Seguridad nocturna', 'Propuesta', 'Quiere contacto', 'Voluntario', 'Fecha'];
       const SEGURIDAD_LABELS = ['Muy seguro/a', 'Algo seguro/a', 'Poco seguro/a', 'Nada seguro/a'];
       const SIN_DATO = 'Sin dato';
 
@@ -616,18 +618,32 @@
         });
       }
 
-      /** Los 10 valores que se ven en la tabla y se exportan al CSV */
-      function rowValues(row) {
+      /**
+       * Valor de las columnas nuevas (rol y voluntariado): las filas antiguas
+       * no traen esos campos, así que se muestran como "—" en la tabla
+       * y vacío en el CSV.
+       */
+      function nuevoValor(value, paraCsv) {
+        const vacio = value === null || value === undefined ||
+          (typeof value === 'string' && value.trim() === '');
+        if (vacio) return paraCsv ? '' : '—';
+        return typeof value === 'string' ? value.trim() : String(value);
+      }
+
+      /** Los 12 valores que se ven en la tabla y se exportan al CSV */
+      function rowValues(row, paraCsv) {
         return [
           displayValue(row && row.nombre),
           displayValue(row && row.celular),
           displayValue(getAnswer(row, 'comuna')),
+          nuevoValor(getAnswer(row, 'rol_representacion'), paraCsv),
           displayValue(getAnswer(row, 'referido_por')),
           displayValue(getAnswer(row, 'le_gusta')),
           displayValue(getAnswer(row, 'problema_principal')),
           displayValue(getAnswer(row, 'seguridad_nocturna')),
           displayValue(getAnswer(row, 'propuesta_cambio')),
           displayValue(getAnswer(row, 'quiere_contacto')),
+          nuevoValor(getAnswer(row, 'quiere_voluntariado'), paraCsv),
           formatDate(row && row.created_at)
         ];
       }
@@ -812,8 +828,8 @@
         el.tableBody.innerHTML = rows.map((row) => {
           const celdas = rowValues(row).map((valor, indice) => {
             let clase = '';
-            if (indice === 7) clase = ' class="cell-wide"';       // Propuesta (texto libre)
-            if (indice === 9) clase = ' class="cell-nowrap"';     // Fecha
+            if (indice === 8) clase = ' class="cell-wide"';       // Propuesta (texto libre)
+            if (indice === 11) clase = ' class="cell-nowrap"';    // Fecha
             return '<td' + clase + '>' + escapeHtml(valor) + '</td>';
           }).join('');
           return '<tr>' + celdas + '</tr>';
@@ -979,7 +995,7 @@
       function construirCsv(rows) {
         const lineas = [CSV_HEADERS.map(csvCell).join(CSV_DELIMITER)];
         rows.forEach((row) => {
-          lineas.push(rowValues(row).map(csvCell).join(CSV_DELIMITER));
+          lineas.push(rowValues(row, true).map(csvCell).join(CSV_DELIMITER));
         });
         return '\uFEFF' + lineas.join('\r\n') + '\r\n';
       }
