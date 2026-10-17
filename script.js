@@ -212,7 +212,7 @@ function initResetViewButton() {
  * ============================================================
  */
 
-// Definición de las 11 preguntas del formulario
+// Definición de las 10 preguntas del formulario
 const FORM_QUESTIONS = [
   // DATOS DEL CIUDADANO
   {
@@ -358,17 +358,6 @@ const FORM_QUESTIONS = [
     key: 'propuesta_cambio'
   },
   {
-    id: 'quiere_contacto',
-    block: 'bloque-propones',
-    blockTitle: 'Lo que propones',
-    title: '¿Te gustaría que te contactáramos con más información sobre “Hablemos de Medallo”?',
-    helper: 'Mantente informado sobre las iniciativas ciudadanas de Sebas López.',
-    type: 'binary',
-    required: true,
-    key: 'quiere_contacto',
-    options: ['Sí', 'No']
-  },
-  {
     id: 'quiere_voluntariado',
     block: 'bloque-propones',
     blockTitle: 'Lo que propones',
@@ -466,7 +455,6 @@ async function submitFinalForm() {
     problema_principal: formAnswers.problema_principal || '',
     seguridad_nocturna: formAnswers.seguridad_nocturna || '',
     propuesta_cambio: formAnswers.propuesta_cambio || '',
-    quiere_contacto: formAnswers.quiere_contacto || '',
     quiere_voluntariado: formAnswers.quiere_voluntariado || ''
   };
 
